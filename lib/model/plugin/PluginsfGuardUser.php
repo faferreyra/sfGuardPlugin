@@ -95,14 +95,29 @@ class PluginsfGuardUser extends BasesfGuardUser
     return $this->getPassword() == call_user_func_array($algorithm, array($this->getSalt().$password));
   }
 
-  public function getProfile()
+  public function getProfile($profileClass = null)
   {
     if (!is_null($this->profile))
     {
       return $this->profile;
     }
 
-    $profileClass = sfConfig::get('app_sf_guard_plugin_profile_class', 'sfGuardUserProfile');
+    if (is_null($profileClass))
+    {
+      $profileClass = 'sfGuardUserProfile';
+    }
+
+    $groups = $this->getGroupNames();
+    if (sizeof($groups) > 0)
+    {
+      $groupTable = 'app_sf_guard_plugin_'.$groups[0].'_profile_class';
+      $profileClass = sfConfig::get($groupTable, 'sfGuardUserProfile');
+    }
+    else
+    {
+      $profileClass = sfConfig::get('app_sf_guard_plugin_profile_class', $profileClass);
+    }
+
     if (!class_exists($profileClass))
     {
       throw new sfException(sprintf('The user profile class "%s" does not exist.', $profileClass));

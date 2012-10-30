@@ -10,7 +10,8 @@
 class sfGuardUserAdminForm extends BasesfGuardUserForm
 {
   protected
-    $pkName = null;
+    $pkName = null,
+    $profileClass = null;
 
   public function configure()
   {
@@ -31,10 +32,16 @@ class sfGuardUserAdminForm extends BasesfGuardUserForm
 
     $this->widgetSchema->moveField('password_again', 'after', 'password');
 
+    $usernamePostValidator = new sfValidatorPropelUnique(array('model' => 'sfGuardUser', 'column' => array('username')));
+    $usernamePostValidator->setMessage('invalid', 'This username is already taken');
+    $this->validatorSchema->setPostValidator(
+      $usernamePostValidator
+    );
+
     $this->mergePostValidator(new sfValidatorSchemaCompare('password', sfValidatorSchemaCompare::EQUAL, 'password_again', array(), array('invalid' => 'The two passwords must be the same.')));
 
     // profile form?
-    $profileFormClass = sfConfig::get('app_sf_guard_plugin_profile_class', 'sfGuardUserProfile').'Form';
+    $profileFormClass = ($this->profileClass === null ? sfConfig::get('app_sf_guard_plugin_profile_class', 'sfGuardUserProfile') : $this->profileClass).'Form';
     if (class_exists($profileFormClass))
     {
       $profileForm = new $profileFormClass();
@@ -43,6 +50,18 @@ class sfGuardUserAdminForm extends BasesfGuardUserForm
 
       $this->mergeForm($profileForm);
     }
+  }
+
+  public function getProfileClass()
+  {
+    return $this->profileClass;
+  }
+
+  public function setProfileClass($profileClass)
+  {
+    $this->profileClass = $profileClass;
+
+    return $this;
   }
 
   public function updateObject($values = null)
@@ -88,7 +107,7 @@ class sfGuardUserAdminForm extends BasesfGuardUserForm
   {
     try
     {
-      return $this->object->getProfile();
+      return $this->object->getProfile($this->profileClass);
     }
     catch (sfException $e)
     {
@@ -104,7 +123,7 @@ class sfGuardUserAdminForm extends BasesfGuardUserForm
       return $this->pkName;
     }
 
-    $profileClass = sfConfig::get('app_sf_guard_plugin_profile_class', 'sfGuardUserProfile');
+    $profileClass = ($this->profileClass === null ? sfConfig::get('app_sf_guard_plugin_profile_class', 'sfGuardUserProfile') : $this->profileClass);
     if (class_exists($profileClass))
     {
       $tableMap = call_user_func(array($profileClass.'Peer', 'getTableMap'));

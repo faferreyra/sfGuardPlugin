@@ -17,4 +17,33 @@
  */
 class PluginsfGuardUserGroupPeer extends BasesfGuardUserGroupPeer
 {
+  /**
+   * Adds a new sfGuardUserGroup
+   *
+   * @param int $userId
+   * @param int $groupId
+   * @return \sfGuardUserGroup
+   * @throws ErrorException
+   */
+  public static function add($userId, $groupId)
+  {
+    $sfGuardUser = sfGuardUserPeer::retrieveByPK($userId);
+    if ($sfGuardUser == null)
+    {
+      throw new ErrorException(sprintf('sfGuardUser with %s id not found', $userId));
+    }
+
+    $sfGuardGroup = sfGuardGroupPeer::retrieveByPK($groupId);
+    if ($sfGuardGroup == null)
+    {
+      throw new ErrorException(sprintf('sfGuardGroup with %s id not found', $groupId));
+    }
+
+    $sfGuardUserGroup = new sfGuardUserGroup();
+    $sfGuardUserGroup->setUserId($userId);
+    $sfGuardUserGroup->setGroupId($groupId);
+    $sfGuardUserGroup->save();
+
+    return $sfGuardUserGroup;
+  }
 }
