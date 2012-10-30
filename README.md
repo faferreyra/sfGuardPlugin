@@ -267,10 +267,10 @@ You can change the name of the user profile class and the foreign key name in
         profile_class:      sfGuardUserProfile
         profile_field_name: user_id
 
-If you need different tables for different user roles you must define a sf_guard_group for each table
-and indicate it in app.yml:
+If you need different tables for different user roles you must define a `sf_guard_group` for each table
+and indicate it in `app.yml`.
 
-    If we have a 'frontend' and a 'backend' group,
+If we have a `frontend` and a `backend` group:
 
     [yml]
     all:
@@ -284,8 +284,8 @@ So, when you get the profile with:
 
 The method will look for the data in the correct table automatically.
 
-** It's very important that when you save a new sfGuardUser object, insert always a new
-row in the sf_guard_user_group table with the correct data:
+** It's very important that when you save a new `sfGuardUser` object, insert always a new
+row in the `sf_guard_user_group` table with the correct data:
 
     $sf_guard_user->save();
 
@@ -293,7 +293,7 @@ row in the sf_guard_user_group table with the correct data:
 
     $sf_guard_user->addsfGuardUserGroup($sfGuardUserGroup);
 
-To load and save the profile data from a form just extend from 'sfGuardUserAdminForm':
+To load and save the profile data from a form just extend from `sfGuardUserAdminForm`:
 
     class FrontendUserForm extends sfGuardUserAdminForm
     {
