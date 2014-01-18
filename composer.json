@@ -1,0 +1,14 @@
+{
+	"name" : "symfony/sf-guard-plugin",
+	"type" : "symfony1-plugin",
+	"description" : "symfony 1.x plugin which provides authentication and authorization features",
+	"keywords" : ["symfony", "security"],
+	"require" : {
+		"composer/installers" : "*"
+	},
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "4.0.2"
+		}
+	}
+}
